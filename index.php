@@ -1,33 +1,33 @@
 <?php
-// session_start();
-// require './connection/config.php';
+session_start();
+require './config.php';
 
-// $message = "";
+$message = "";
 
-// // Handle login
-// if ($_SERVER["REQUEST_METHOD"] === "POST") {
-//     $username = trim($_POST['username']);
-//     $password = $_POST['password'];
+// Handle login
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = trim($_POST['username']);
+    $password = $_POST['password'];
 
-//     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-//     $stmt->execute([$username]);
-//     $user = $stmt->fetch();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch();
 
-//     if ($user && $password === $user['password']) {
-//         $_SESSION['user_id'] = $user['id'];
-//         $_SESSION['role'] = $user['role'];
+    if ($user && $password === $user['password']) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['role'] = $user['role'];
 
-//         // Redirect based on role
-//         if ($user['role'] === 'student') {
-//             header("Location: dashboard.php"); // student dashboard
-//         } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
-//             header("Location: teacher_dashboard.php"); // teacher/admin dashboard
-//         }
-//         exit;
-//     } else {
-//         $message = "❌ Invalid username or password!";
-//     }
-// }
+        // Redirect based on role
+        if ($user['role'] === 'student') {
+            header("Location: dashboard.php"); // student dashboard
+        } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
+            header("Location: teacher_dashboard.php"); // teacher/admin dashboard
+        }
+        exit;
+    } else {
+        $message = "❌ Invalid username or password!";
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
