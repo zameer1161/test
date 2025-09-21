@@ -6,7 +6,7 @@ $dbname = "attendance_db";
 $port = 3306;
 
 // Path to CA certificate inside Azure
-$cert = "/home/site/wwwroot/DigiCertGlobalRootCA.crt.pem";
+// $cert = "/home/site/wwwroot/DigiCertGlobalRootCA.crt.pem";
 
 // Init MySQLi
 $conn = mysqli_init();
@@ -15,7 +15,7 @@ $conn = mysqli_init();
 mysqli_ssl_set($conn, NULL, NULL, $cert, NULL, NULL);
 
 // Connect with SSL
-if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
+if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port)) {
     die("Failed to connect to MySQL: " . mysqli_connect_error());
 }
 ?>
