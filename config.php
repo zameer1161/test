@@ -3,7 +3,7 @@ $host = "cloud-database-db.mysql.database.azure.com";
 $user = "zameer";   // FIXED: Azure variable is DB_USER, not DB_USERNAME
 $password = "ZAIDISGAY*123";
 $dbname = "attendance_db";
-$port = "3306";
+$port = 3306;
 
 // Path to CA certificate inside Azure
 $cert = "/home/site/wwwroot/DigiCertGlobalRootCA.crt.pem";
