@@ -1,18 +1,7 @@
 <?php
 session_start();
 
-$host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer";   // FIXED: Azure variable is DB_USER, not DB_USERNAME
-$password = "ZAIDISGAY*123";
-$dbname = "attendance_db";
-
-$conn = mysql_connect($host,$user,$password,$dbname);
-
-if(!$conn){
-    echo "error in connecting";
-}else{
-    echo "connected sucsessfully";
-}
+include "./config.php";
 
 // Handle login
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
