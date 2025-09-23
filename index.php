@@ -1,31 +1,28 @@
 <?php
 session_start();
 
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer";
+$user = "zameer@cloud-database-db";
 $password = "ZAIDISGAY*123";
 $dbname = "attendance_db";
 $port = 3306;
 
+// SSL cert path
 $ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 
 $conn = mysqli_init();
-
-// Force SSL
-mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
 
 if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
-    die("❌ Database connection failed: " . mysqli_connect_error());
-} else {
-    echo "✅ Connected to Azure MySQL with SSL!";
+    die("❌ Connection failed: " . mysqli_connect_error());
 }
+
+echo "✅ Connected successfully!";
+
 
 
 // Handle login
