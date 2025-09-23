@@ -1,26 +1,22 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+session_start();
 
-// Azure MySQL Flexible Server credentials
+// ✅ Azure MySQL Flexible Server credentials
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer@cloud-database-db";  // Must include @servername
-$password = "ZAIDISGAY*123";         // Your real password
+$user = "zameer@cloud-database-db";   // Must include @servername
+$password = "ZAIDISGAY*123";          // Your real password
 $dbname = "attendance_db";
 $port = 3306;
-
-// SSL certificate path (must be in same folder)
-$ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 
 // Initialize MySQLi
 $conn = mysqli_init();
 
-// Attach SSL certificate
-if (!mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL)) {
-    die("❌ SSL setup failed: " . mysqli_connect_error() . " | Error number: " . mysqli_connect_errno());
-}
+// Attach SSL (skip CA verification for now)
+mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
 
-// Attempt SSL connection
+// Connect with SSL, but do not verify certificate
 if (!mysqli_real_connect(
     $conn,
     $host,
@@ -29,9 +25,8 @@ if (!mysqli_real_connect(
     $dbname,
     $port,
     NULL,
-    MYSQLI_CLIENT_SSL
+    MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT
 )) {
-    // Full debug info
     die(
         "❌ Connection failed!\n" .
         "Error: " . mysqli_connect_error() . "\n" .
@@ -39,10 +34,9 @@ if (!mysqli_real_connect(
         "Host: $host\n" .
         "User: $user\n" .
         "DB: $dbname\n" .
-        "Port: $port\n" .
-        "SSL CA file exists: " . (file_exists($ssl_ca) ? "Yes" : "No")
+        "Port: $port\n"
     );
 }
 
-echo "✅ Connected successfully to Azure MySQL!";
+echo "✅ Connected successfully to Azure MySQL (SSL without cert verification)!";
 ?>
