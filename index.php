@@ -1,6 +1,10 @@
 <?php
 session_start();
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 // Database config
 $host = "cloud-database-db.mysql.database.azure.com";
 $user = "zameer";   // must include @servername
