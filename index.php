@@ -1,55 +1,56 @@
 <?php
-// session_start();
+session_start();
 
-// $host = "cloud-database-db.mysql.database.azure.com";
-// $user = "zameer@cloud-database-db";  // must include @servername
-// $password = "ZAIDISGAY*123";
-// $dbname = "attendance_db";
-// $port = 3306;
+// Database config
+$host = "cloud-database-db.mysql.database.azure.com";
+$user = "zameer@cloud-database-db";   // must include @servername
+$password = "ZAIDISGAY*123";
+$dbname = "attendance_db";
+$port = 3306;
 
-// // Path to SSL certificate required by Azure MySQL
-// $ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
+// Path to SSL certificate required by Azure MySQL
+$ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 
-// // Start mysqli connection
-// $conn = mysqli_init();
+// Init mysqli
+$conn = mysqli_init();
+mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
 
-// // Tell MySQLi to use SSL
-// mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
+if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
+    die("❌ Database connection failed: " . mysqli_connect_error());
+}
 
-// // Try to connect
-// if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
-//     die("❌ Connection failed: " . mysqli_connect_error());
-// } else {
-//     echo "✅ Connected successfully to Azure MySQL!";
-// }
+// Handle login
+$message = "";
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $username = trim($_POST['username']);
+    $password_input = $_POST['password'];
 
+    // Prepared statement
+    $stmt = mysqli_prepare($conn, "SELECT id, username, password, role FROM users WHERE username = ?");
+    mysqli_stmt_bind_param($stmt, "s", $username);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $user = mysqli_fetch_assoc($result);
 
-// // Handle login
-// if ($_SERVER["REQUEST_METHOD"] === "POST") {
-//     $username = trim($_POST['username']);
-//     $password = $_POST['password'];
+    if ($user && $password_input === $user['password']) { 
+        // ⚠️ Plain text password comparison. 
+        // In production, store hashed passwords and use password_verify().
+        
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['role'] = $user['role'];
 
-//     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-//     $stmt->execute([$username]);
-//     $user = $stmt->fetch();
-
-//     if ($user && $password === $user['password']) {
-//         $_SESSION['user_id'] = $user['id'];
-//         $_SESSION['role'] = $user['role'];
-
-//         // Redirect based on role
-//         if ($user['role'] === 'student') {
-//             header("Location: dashboard.php"); // student dashboard
-//         } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
-//             header("Location: teacher_dashboard.php"); // teacher/admin dashboard
-//         }
-//         exit;
-//     } else {
-//         $message = "❌ Invalid username or password!";
-//     }
-// }
-echo "Something"
- ?>
+        // Redirect based on role
+        if ($user['role'] === 'student') {
+            header("Location: dashboard.php"); 
+        } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
+            header("Location: teacher_dashboard.php"); 
+        }
+        exit;
+    } else {
+        $message = "❌ Invalid username or password!";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -100,9 +101,11 @@ echo "Something"
     <div class="col-md-6">
       <div class="card p-5 bg-white">
         <h2 class="text-center mb-4">Login</h2>
-        <?php //if ($message): ?>
-          <!-- <div  class="alert alert-danger"><?= $message ?></div> -->
-        <?php // endif; ?>
+
+        <?php if (!empty($message)): ?>
+          <div class="alert alert-danger"><?= $message ?></div>
+        <?php endif; ?>
+
         <form method="POST">
           <div class="mb-3">
             <label class="form-label">Username</label>
