@@ -2,29 +2,47 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// ✅ Database credentials
+// Azure MySQL Flexible Server credentials
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer";   // IMPORTANT: username@servername format
-$password = "ZAIDISGAY*123"; // put your real password
+$user = "zameer@cloud-database-db";  // Must include @servername
+$password = "ZAIDISGAY*123";         // Your real password
 $dbname = "attendance_db";
 $port = 3306;
 
-// ✅ SSL certificate path (make sure DigiCertGlobalRootCA.crt.pem is in the same folder)
+// SSL certificate path (must be in same folder)
 $ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 
-// ✅ Initialize MySQLi
+// Initialize MySQLi
 $conn = mysqli_init();
 
-// Attach SSL cert
+// Attach SSL certificate
 if (!mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL)) {
-    die("❌ SSL setup failed: " . mysqli_error($conn));
+    die("❌ SSL setup failed: " . mysqli_connect_error() . " | Error number: " . mysqli_connect_errno());
 }
 
-// ✅ Connect with SSL
-if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
-    die("❌ Connection failed: " . mysqli_connect_error());
+// Attempt SSL connection
+if (!mysqli_real_connect(
+    $conn,
+    $host,
+    $user,
+    $password,
+    $dbname,
+    $port,
+    NULL,
+    MYSQLI_CLIENT_SSL
+)) {
+    // Full debug info
+    die(
+        "❌ Connection failed!\n" .
+        "Error: " . mysqli_connect_error() . "\n" .
+        "Error number: " . mysqli_connect_errno() . "\n" .
+        "Host: $host\n" .
+        "User: $user\n" .
+        "DB: $dbname\n" .
+        "Port: $port\n" .
+        "SSL CA file exists: " . (file_exists($ssl_ca) ? "Yes" : "No")
+    );
 }
 
-// ✅ If connected
-// echo "✅ Connected successfully!";
+echo "✅ Connected successfully to Azure MySQL!";
 ?>
