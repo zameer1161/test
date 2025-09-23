@@ -14,7 +14,7 @@ $port = 3306;
 $con = mysqli_init();
 
 mysqli_ssl_set($con,NULL,NULL, "{DigiCertGlobalRootG2.crt.pem}", NULL, NULL);
-mysqli_real_connect($conn, "cloud-database-db.mysql.database.azure.com", "zameer", "{ZAIDISGAY*123}", "{attendance_db}", 3306, MYSQLI_CLIENT_SSL);
+mysqli_real_connect($con, "cloud-database-db.mysql.database.azure.com", "zameer", "{ZAIDISGAY*123}", "{attendance_db}", 3306, MYSQLI_CLIENT_SSL);
 
 echo "✅ Connected successfully to Azure MySQL (SSL without cert verification)!";
 ?>
