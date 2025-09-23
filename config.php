@@ -41,5 +41,5 @@ if (!mysqli_real_connect(
     );
 }
 
-echo "✅ Connected successfully to Azure MySQL with SSL!";
+// echo "✅ Connected successfully to Azure MySQL with SSL!";
 ?>
