@@ -8,7 +8,7 @@ ini_set('display_errors', 1);
 session_start();
 
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer@cloud-database-db";
+$user = "zameer";
 $password = "ZAIDISGAY*123";
 $dbname = "attendance_db";
 $port = 3306;
@@ -18,7 +18,7 @@ $ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 $conn = mysqli_init();
 
 // Force SSL
-mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, true);
+mysqli_options($conn, MYSQLI_OPT_SSL_VERIFY_SERVER_CERT, false);
 mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
 
 if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
