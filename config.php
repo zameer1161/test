@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 // ✅ Database credentials
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer@cloud-database-db";   // IMPORTANT: username@servername format
+$user = "zameer";   // IMPORTANT: username@servername format
 $password = "ZAIDISGAY*123"; // put your real password
 $dbname = "attendance_db";
 $port = 3306;
