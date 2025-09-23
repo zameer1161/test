@@ -11,32 +11,10 @@ $dbname = "attendance_db";
 $port = 3306;
 
 // Initialize MySQLi
-$conn = mysqli_init();
+$con = mysqli_init();
 
-// Attach SSL (skip CA verification for now)
-mysqli_ssl_set($conn, NULL, NULL, NULL, NULL, NULL);
-
-// Connect with SSL, but do not verify certificate
-if (!mysqli_real_connect(
-    $conn,
-    $host,
-    $user,
-    $password,
-    $dbname,
-    $port,
-    NULL,
-    MYSQLI_CLIENT_SSL_DONT_VERIFY_SERVER_CERT
-)) {
-    die(
-        "❌ Connection failed!\n" .
-        "Error: " . mysqli_connect_error() . "\n" .
-        "Error number: " . mysqli_connect_errno() . "\n" .
-        "Host: $host\n" .
-        "User: $user\n" .
-        "DB: $dbname\n" .
-        "Port: $port\n"
-    );
-}
+mysqli_ssl_set($con,NULL,NULL, "{DigiCertGlobalRootG2.crt.pem}", NULL, NULL);
+mysqli_real_connect($conn, "cloud-database-db.mysql.database.azure.com", "zameer", "{ZAIDISGAY*123}", "{attendance_db}", 3306, MYSQLI_CLIENT_SSL);
 
 echo "✅ Connected successfully to Azure MySQL (SSL without cert verification)!";
 ?>
