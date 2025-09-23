@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-session_start();
 
 // Azure MySQL Flexible Server credentials
 $host = "cloud-database-db.mysql.database.azure.com";
