@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // Fetch user info from DB
-$stmt = $pdo->prepare("SELECT fullname, username, role FROM users WHERE id = ?");
+$stmt = $conn->prepare("SELECT fullname, username, role FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 ?>

@@ -12,7 +12,7 @@ $classFilter = $_GET['class'] ?? '';
 $dateFilter  = $_GET['date'] ?? '';
 
 // Fetch unique classes for filter dropdown
-$classesStmt = $pdo->query("SELECT DISTINCT class FROM students ORDER BY class");
+$classesStmt = $conn->query("SELECT DISTINCT class FROM students ORDER BY class");
 $classes = $classesStmt->fetchAll(PDO::FETCH_COLUMN);
 
 // Fetch attendance records

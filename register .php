@@ -31,34 +31,34 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $pdo->beginTransaction();
 
             // Check username exists
-            $checkUser = $pdo->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
+            $checkUser = $conn->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
             $checkUser->execute([$username]);
             if ($checkUser->fetch()) {
                 $pdo->rollBack();
                 $message = "❌ Username already taken.";
             } else {
                 // Insert into users
-                $insUser = $pdo->prepare("INSERT INTO users (username, password, role, created_at) VALUES (?, ?, 'student', NOW())");
+                $insUser = $conn->prepare("INSERT INTO users (username, password, role, created_at) VALUES (?, ?, 'student', NOW())");
                 $insUser->execute([$username, $password]);
-                $user_id = $pdo->lastInsertId();
+                $user_id = $conn->lastInsertId();
 
                 // Check duplicate roll_no
-                $checkStudent = $pdo->prepare("SELECT student_id FROM students WHERE roll_no = ? LIMIT 1");
+                $checkStudent = $conn->prepare("SELECT student_id FROM students WHERE roll_no = ? LIMIT 1");
                 $checkStudent->execute([$roll_no]);
                 if ($checkStudent->fetch()) {
-                    $pdo->rollBack();
+                    $conn->rollBack();
                     $message = "❌ Roll number already registered.";
                 } else {
                     // Insert student without email
-                    $insStudent = $pdo->prepare("INSERT INTO students (user_id, fullname, roll_no, class, profile_photo, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+                    $insStudent = $conn->prepare("INSERT INTO students (user_id, fullname, roll_no, class, profile_photo, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
                     $insStudent->execute([$user_id, $fullname, $roll_no, $class, $photoPath]);
-                    $pdo->commit();
+                    $conn->commit();
                     $message = "✅ Student registered successfully! <a href='login.php'>Login</a>";
                 }
             }
 
         } catch (Exception $e) {
-            if ($pdo->inTransaction()) $pdo->rollBack();
+            if ($conn->inTransaction()) $conn->rollBack();
             $message = "❌ Error: " . $e->getMessage();
         }
     }

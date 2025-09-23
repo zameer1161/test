@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teacher','adm
 $message = "";
 
 // Fetch all students
-$stmt = $pdo->query("SELECT student_id, fullname, roll_no, class, profile_photo FROM students ORDER BY class, roll_no");
+$stmt = $conn->query("SELECT student_id, fullname, roll_no, class, profile_photo FROM students ORDER BY class, roll_no");
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle form submission
@@ -23,11 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $pdo->beginTransaction();
         foreach ($_POST['status'] as $student_id => $status) {
             // Prevent duplicate attendance for same student/date
-            $check = $pdo->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
+            $check = $conn->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
             $check->execute([$student_id, $date]);
             if ($check->fetch()) continue;
 
-            $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
+            $insert = $conn->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
                                      VALUES (?, ?, ?, ?, ?)");
             // Get class of student
             $studentClass = '';
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $pdo->commit();
         $message = "✅ Attendance marked successfully for $date!";
     } catch (Exception $e) {
-        if ($pdo->inTransaction()) $pdo->rollBack();
+        if ($conn->inTransaction()) $conn->rollBack();
         $message = "❌ Error: " . $e->getMessage();
     }
 }
@@ -52,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <meta charset="UTF-8">
 <title>Mark Attendance</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="style.css" href="style.php"
-/*<style>
+<link href="style.css" href="style.php">
+<style>
 body { margin: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0d0d0d , #0d0d0d);
@@ -63,7 +63,7 @@ body { margin: 0;
 .btn-custom:hover { transform: translateY(-2px); }
 .navbar { background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); border-radius: 12px; margin-bottom: 18px; }
 </style>
-*/ </head>
+</head>
 <body>
 <nav class="navbar navbar-expand-lg container mt-3">
 <div class="container-fluid">

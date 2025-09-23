@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $pdo->beginTransaction();
             foreach ($statusArray as $student_id => $status) {
                 // Prevent duplicate attendance
-                $check = $pdo->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
+                $check = $conn->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
                 $check->execute([$student_id, $date]);
                 if ($check->fetch()) continue;
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     if ($s['student_id'] == $student_id) { $studentClass = $s['class']; break; }
                 }
 
-                $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
+                $insert = $conn->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
                                          VALUES (?, ?, ?, ?, ?)");
                 $insert->execute([$student_id, $studentClass, $date, $status, $teacher_id]);
             }
