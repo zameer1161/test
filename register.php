@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $message = "❌ Please fill in all required fields.";
     } else {
         try {
-            $pdo->beginTransaction();
+            $conn->beginTransaction();
 
             // Check username exists
             $checkUser = $conn->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
