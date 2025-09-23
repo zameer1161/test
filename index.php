@@ -1,54 +1,55 @@
 <?php
-session_start();
+// session_start();
 
-$host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer@cloud-database-db";  // must include @servername
-$password = "ZAIDISGAY*123";
-$dbname = "attendance_db";
-$port = 3306;
+// $host = "cloud-database-db.mysql.database.azure.com";
+// $user = "zameer@cloud-database-db";  // must include @servername
+// $password = "ZAIDISGAY*123";
+// $dbname = "attendance_db";
+// $port = 3306;
 
-// Path to SSL certificate required by Azure MySQL
-$ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
+// // Path to SSL certificate required by Azure MySQL
+// $ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 
-// Start mysqli connection
-$conn = mysqli_init();
+// // Start mysqli connection
+// $conn = mysqli_init();
 
-// Tell MySQLi to use SSL
-mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
+// // Tell MySQLi to use SSL
+// mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
 
-// Try to connect
-if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
-    die("❌ Connection failed: " . mysqli_connect_error());
-} else {
-    echo "✅ Connected successfully to Azure MySQL!";
-}
+// // Try to connect
+// if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
+//     die("❌ Connection failed: " . mysqli_connect_error());
+// } else {
+//     echo "✅ Connected successfully to Azure MySQL!";
+// }
 
 
-// Handle login
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $username = trim($_POST['username']);
-    $password = $_POST['password'];
+// // Handle login
+// if ($_SERVER["REQUEST_METHOD"] === "POST") {
+//     $username = trim($_POST['username']);
+//     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch();
+//     $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+//     $stmt->execute([$username]);
+//     $user = $stmt->fetch();
 
-    if ($user && $password === $user['password']) {
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role'] = $user['role'];
+//     if ($user && $password === $user['password']) {
+//         $_SESSION['user_id'] = $user['id'];
+//         $_SESSION['role'] = $user['role'];
 
-        // Redirect based on role
-        if ($user['role'] === 'student') {
-            header("Location: dashboard.php"); // student dashboard
-        } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
-            header("Location: teacher_dashboard.php"); // teacher/admin dashboard
-        }
-        exit;
-    } else {
-        $message = "❌ Invalid username or password!";
-    }
-}
-?>
+//         // Redirect based on role
+//         if ($user['role'] === 'student') {
+//             header("Location: dashboard.php"); // student dashboard
+//         } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
+//             header("Location: teacher_dashboard.php"); // teacher/admin dashboard
+//         }
+//         exit;
+//     } else {
+//         $message = "❌ Invalid username or password!";
+//     }
+// }
+echo "Something"
+ ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
