@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config.php';
+require './connection/config.php';
 
 $message = "";
 
@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
     $stmt->execute([$username]);
     $user = $stmt->fetch();
 
@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         // Redirect based on role
         if ($user['role'] === 'student') {
-            header("Location: index.php"); // student dashboard
+            header("Location: dashboard.php"); // student dashboard
         } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
             header("Location: teacher_dashboard.php"); // teacher/admin dashboard
         }
@@ -35,10 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   <meta charset="UTF-8">
   <title>Login - Attendance Tracker</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <link rel="stylesheet" type="text/css" href="style.php">
 
-/*<style>
-    body {
+<style>
+   /* body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0d0d0d , #0d0d0d);
@@ -64,9 +65,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
       backdrop-filter: blur(10px);
       border-radius: 15px;
       margin-bottom: 20px;
-    }
+    }*/
   </style>
-*/</head>
+</head>
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg container mt-3">
@@ -76,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <a href="register.php" class="btn btn-light">Register</a>
       </div>
     </div>
-  </nav>
+  </nav>  
 
   <!-- Login Form -->
   <div class="container d-flex justify-content-center align-items-center min-vh-100">

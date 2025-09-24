@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config.php';
+require './connection/config.php';
 
 // Only teacher/admin can access
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'teacher' && $_SESSION['role'] !== 'admin')) {
@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'teacher' && $_SESSIO
 }
 
 // Fetch teacher/admin info
-$stmt = $conn->prepare("SELECT fullname, username, role FROM users WHERE id = ?");
+$stmt = $pdo->prepare("SELECT fullname, username, role FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch();
 ?>

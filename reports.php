@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config.php';
+require './connection/config.php';
 
 // Check if teacher/admin is logged in
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teacher','admin'])) {
@@ -12,7 +12,7 @@ $classFilter = $_GET['class'] ?? '';
 $dateFilter  = $_GET['date'] ?? '';
 
 // Fetch unique classes for filter dropdown
-$classesStmt = $conn->query("SELECT DISTINCT class FROM students ORDER BY class");
+$classesStmt = $pdo->query("SELECT DISTINCT class FROM students ORDER BY class");
 $classes = $classesStmt->fetchAll(PDO::FETCH_COLUMN);
 
 // Fetch attendance records
@@ -46,7 +46,7 @@ $attendanceRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="style.php">
 
- /*<style> 
+ <style> 
  body { margin: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0d0d0d , #0d0d0d);
@@ -56,8 +56,9 @@ $attendanceRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
 .badge-present { background-color:rgb(55, 58, 56); }
 .badge-absent { background-color: #dc3545; }
 .badge-late { background-color: #ffc107; color: black; }
+.badge-sick { background-color: #0dcaf0; color: black; }
 </style>
-*/
+
 </head>
 <body>
 <nav class="navbar navbar-expand-lg container mt-3">
@@ -117,7 +118,9 @@ $attendanceRecords = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <td>
 <?php
 $status = $a['status'];
-$badgeClass = $status === 'Present' ? 'badge-present' : ($status === 'Absent' ? 'badge-absent' : 'badge-late');
+$badgeClass = $status === 'Present' ? 'badge-present'
+  : ($status === 'Absent' ? 'badge-absent'
+  : ($status === 'Late' ? 'badge-late' : 'badge-sick'));
 ?>
 <span class="badge <?= $badgeClass ?>"><?= $status ?></span>
 </td>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require 'config.php';
+require './connection/config.php';
 
 
 // Check if teacher/admin is logged in
@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $pdo->beginTransaction();
             foreach ($statusArray as $student_id => $status) {
                 // Prevent duplicate attendance
-                $check = $conn->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
+                $check = $pdo->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
                 $check->execute([$student_id, $date]);
                 if ($check->fetch()) continue;
 
@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     if ($s['student_id'] == $student_id) { $studentClass = $s['class']; break; }
                 }
 
-                $insert = $conn->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
+                $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
                                          VALUES (?, ?, ?, ?, ?)");
                 $insert->execute([$student_id, $studentClass, $date, $status, $teacher_id]);
             }
@@ -60,17 +60,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="style.php">
 
-/*<style>
-body { margin: 0;
+<style>
+/*body { margin: 0;
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #0d0d0d, #0d0d0d);
       color: #fff; }
 .card { border-radius: 20px; box-shadow: 0px 6px 20px, #ff9900; }
 .btn-custom { background: #ff5e62; color: white; transition: 0.18s; border-radius: 10px; padding: 8px 20px; }
 .btn-custom:hover { transform: translateY(-2px); }
-.navbar { background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); border-radius: 12px; margin-bottom: 18px; }
+.navbar { background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); border-radius: 12px; margin-bottom: 18px; } */
 </style>
-*/
+
  </head>
 <body>
 <nav class="navbar navbar-expand-lg container mt-3">
@@ -128,6 +128,7 @@ body { margin: 0;
 <option value="Present">Present</option>
 <option value="Absent" selected>Absent</option>
 <option value="Late">Late</option>
+<option value="Sick">Sick Leave</option>
 </select>
 </td>
 </tr>
