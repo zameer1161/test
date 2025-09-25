@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 // Azure MySQL Flexible Server credentials
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer@cloud-database-db";  // Must include @servername
+$user = "zameer";  // Must include @servername
 $password = "ZAIDISGAY*123";
 $dbname = "attendance_db";
 $port = 3306;
