@@ -1,6 +1,6 @@
 <?php
 session_start();
-require './connection/config.php';
+require 'config.php';
 
 $message = "";
 

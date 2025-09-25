@@ -1,6 +1,6 @@
 <?php
 session_start();
-require './connection/config.php';
+require 'config.php';
 
 // Check if teacher/admin is logged in
 if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teacher','admin'])) {

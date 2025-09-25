@@ -1,6 +1,6 @@
 <?php
 session_start();
-require './connection/config.php'; // $pdo must be defined
+require 'config.php'; // $pdo must be defined
 
 $message = "";
 

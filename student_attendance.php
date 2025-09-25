@@ -1,6 +1,6 @@
 <?php
 session_start();
-require './connection/config.php';
+require 'config.php';
 
 // Ensure only students can access
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'student') {
