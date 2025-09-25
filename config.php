@@ -13,14 +13,14 @@ $port = 3306;
 $ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.crt.pem";
 
 // Initialize MySQLi
-$conn = mysqli_init();
+$pdo = mysqli_init();
 
 // Attach SSL certificate
-mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
+mysqli_ssl_set($pdo, NULL, NULL, $ssl_ca, NULL, NULL);
 
 // Connect with SSL
 if (!mysqli_real_connect(
-    $conn,
+    $pdo,
     $host,
     $user,
     $password,
@@ -41,16 +41,13 @@ if (!mysqli_real_connect(
     );
 }
 
-
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $password);
-    // Set common PDO options
+try{
+    
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Database Connection Failed: " . $e->getMessage());
+}catch (Exception $e){
+    echo "eror in pdo connection..........";
 }
-
 
 // echo "✅ Connected successfully to Azure MySQL with SSL!";
 ?>
