@@ -20,7 +20,7 @@ if (!$student) {
 $dateFilterStart = $_GET['start'] ?? '';
 $dateFilterEnd   = $_GET['end'] ?? '';
 
-// Build query
+
 $sql = "SELECT date, status FROM attendance WHERE student_id = ?";
 $params = [$student['student_id']];
 if ($dateFilterStart) { $sql .= " AND date >= ?"; $params[] = $dateFilterStart; }
@@ -31,7 +31,7 @@ $stmt = $pdo->prepare($sql);
 $stmt->execute($params);
 $records = $stmt->fetchAll();
 
-// Summary
+
 $totalDays = count($records);
 $present = 0; $absent = 0; $late = 0; $sick = 0;
 foreach ($records as $r) {
@@ -66,9 +66,8 @@ $attendancePercent = $considered ? round(($present / $considered) * 100, 2) : 0;
   </nav>
 
   <div class="container d-flex justify-content-center align-items-start min-vh-100 mt-3">
-    <div class="col-md-10">
-      <div class="card p-4 bg-white">
-        <h2 class="text-center mb-3">My Attendance</h2>
+    <div class="wrapper">
+      <h2>My Attendance</h2>
         <p class="text-center mb-4">
           <strong><?= htmlspecialchars($student['fullname']) ?></strong>
           (Roll: <?= htmlspecialchars($student['roll_no']) ?>, Class: <?= htmlspecialchars($student['class']) ?>)
@@ -112,17 +111,38 @@ $attendancePercent = $considered ? round(($present / $considered) * 100, 2) : 0;
                   <td><?= $i + 1 ?></td>
                   <td><?= htmlspecialchars($r['date']) ?></td>
                   <td>
-                    <?php $status = $r['status']; ?>
-                    <span class="badge <?= $status==='Present' ? 'bg-success' : ($status==='Absent' ? 'bg-danger' : ($status==='Late' ? 'bg-warning text-dark' : 'bg-info text-dark')) ?>"><?= htmlspecialchars($status) ?></span>
+                    <?php 
+                    $status = $r['status'];
+                    $isPresent = $status === 'Present';
+                    $isAbsent = $status === 'Absent';
+                    $isLate = $status === 'Late';
+                    $isSick = $status === 'Sick';
+                    ?>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" <?= $isPresent ? 'checked' : '' ?> disabled>
+                      <label class="form-check-label">Present</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" <?= $isAbsent ? 'checked' : '' ?> disabled>
+                      <label class="form-check-label">Absent</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" <?= $isLate ? 'checked' : '' ?> disabled>
+                      <label class="form-check-label">Late</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" <?= $isSick ? 'checked' : '' ?> disabled>
+                      <label class="form-check-label">Sick Leave</label>
+                    </div>
                   </td>
                 </tr>
+                
               <?php endforeach; ?>
             <?php else: ?>
               <tr><td colspan="3" class="text-center">No records found.</td></tr>
             <?php endif; ?>
           </tbody>
         </table>
-      </div>
     </div>
   </div>
 </body>

@@ -17,25 +17,26 @@ $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $date = $_POST['date'] ?? date('Y-m-d');
+    $subject = $_POST['subject'] ?? '';
     $teacher_id = $_SESSION['user_id'];
 
     try {
         $pdo->beginTransaction();
         foreach ($_POST['status'] as $student_id => $status) {
-            // Prevent duplicate attendance for same student/date
-            $check = $pdo->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=?");
-            $check->execute([$student_id, $date]);
+            // Prevent duplicate attendance for same student/date/subject
+            $check = $pdo->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=? AND subject=?");
+            $check->execute([$student_id, $date, $subject]);
             if ($check->fetch()) continue;
 
-            $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by) 
-                                     VALUES (?, ?, ?, ?, ?)");
+            $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, subject, status, marked_by) 
+                                     VALUES (?, ?, ?, ?, ?, ?)");
             // Get class of student
             $studentClass = '';
             foreach ($students as $s) {
                 if ($s['student_id'] == $student_id) { $studentClass = $s['class']; break; }
             }
 
-            $insert->execute([$student_id, $studentClass, $date, $status, $teacher_id]);
+            $insert->execute([$student_id, $studentClass, $date, $subject, $status, $teacher_id]);
         }
         $pdo->commit();
         $message = "✅ Attendance marked successfully for $date!";
@@ -53,16 +54,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <title>Mark Attendance</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="style.css" href="style.php"
-<style>
-/* body { margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #0d0d0d , #0d0d0d);
-      color: #fff; }
-.card { border-radius: 20px; box-shadow: 0px 6px 20px rgba(0,0,0,0.15); }
-.btn-custom { background: #ff5e62; color: white; transition: 0.18s; border-radius: 10px; padding: 8px 20px; }
-.btn-custom:hover { transform: translateY(-2px); }
-.navbar { background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); border-radius: 12px; margin-bottom: 18px; }
-*/</style>
+
+<style> 
+    /* body { margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0d0d0d , #0d0d0d);
+            color: #fff; }
+        .card { border-radius: 20px; box-shadow: 0px 6px 20px rgba(0,0,0,0.15); }
+        .btn-custom { background: #ff5e62; color: white; transition: 0.18s; border-radius: 10px; padding: 8px 20px; }
+        .btn-custom:hover { transform: translateY(-2px); }
+        .navbar { background: rgba(255,255,255,0.12); backdrop-filter: blur(6px); border-radius: 12px; margin-bottom: 18px; }
+    */
+</style>
+
 </head>
 <body>
 <nav class="navbar navbar-expand-lg container mt-3">
@@ -85,9 +89,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <?php endif; ?>
 
 <form method="POST">
-<div class="mb-3">
+<div class="row mb-3">
+<div class="col-md-6">
 <label class="form-label">Select Date</label>
 <input type="date" name="date" class="form-control" value="<?= date('Y-m-d') ?>" required>
+</div>
+<div class="col-md-6">
+<label class="form-label">Select Subject</label>
+<select name="subject" class="form-select" required>
+<option value="">-- Select Subject --</option>
+<option value="English">English</option>
+<option value="PHP">PHP</option>
+<option value="Web Development">Web Development</option>
+<option value="Full Stack">Full Stack</option>
+</select>
+</div>
 </div>
 
 <table class="table table-bordered table-striped">
@@ -118,7 +134,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <option value="Present">Present</option>
 <option value="Absent" selected>Absent</option>
 <option value="Late">Late</option>
-<option value="Sick">Sick Leave</option>
 </select>
 </td>
 </tr>
