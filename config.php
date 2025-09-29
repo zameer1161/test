@@ -45,7 +45,7 @@
 // =========================
 
 // Change these according to your Azure details
-$host = "attendances-db.mysql.database.azure.com";   // your Azure server name
+$host = "cloud-database-db.mysql.database.azure.com";   // your Azure server name
 $dbname = "attendances_db";                          // your database
 $username = "zameer";                 // Azure requires username@servername
 $password = "ZAIDISGAY*123";                // your DB password
