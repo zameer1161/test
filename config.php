@@ -46,33 +46,33 @@
 // }
 ?>
 <?php
-// =========================
-// PDO Config for Azure MySQL
-// =========================
 
-// Change these according to your Azure details
-// $host = "cloud-database-db.mysql.database.azure.com";   // your Azure server name
-// $dbname = "attendances_db";                          // your database
-// $username = "zameer";                 // Azure requires username@servername
-// $password = "ZAIDISGAY*123";                // your DB password
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// // Path to SSL certificate
-// $ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.crt";     // put DigiCertGlobalRootG2.pem in your project folder
+$host = "cloud-database-db.mysql.database.azure.com";   // your Azure server name
+$dbname = "attendances_db";                          // your database
+$username = "zameer";                 // Azure requires username@servername
+$password = "ZAIDISGAY*123";                // your DB password
 
-// try {
-//     $pdo = new PDO(
-//         "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-//         $username,
-//         $password,
-//         [
-//             PDO::MYSQL_ATTR_SSL_CA => $ssl_ca,       // SSL required by Azure
-//             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-//             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-//         ]
-//     );
+// Path to SSL certificate
+$ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.crt.pem";     // put DigiCertGlobalRootG2.pem in your project folder
 
-//     // echo "✅ Connected securely to Azure MySQL!";
-// } catch (PDOException $e) {
-//     die("❌ Database connection failed: " . $e->getMessage());
-// }
+try {
+    $pdo = new PDO(
+        "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
+        $username,
+        $password,
+        [
+            PDO::MYSQL_ATTR_SSL_CA => $ssl_ca,       // SSL required by Azure
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        ]
+    );
+
+    // echo "✅ Connected securely to Azure MySQL!";
+} catch (PDOException $e) {
+    die("❌ Database connection failed: " . $e->getMessage());
+}
 ?>
