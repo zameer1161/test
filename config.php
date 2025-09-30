@@ -30,7 +30,7 @@ $dbname = "attendances_db";
 $port = 3306;
 
 // Path to SSL certificate required by Azure MySQL
-$ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
+$ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.crt";
 
 // Start mysqli connection
 $conn = mysqli_init();
