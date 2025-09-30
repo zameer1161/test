@@ -17,6 +17,12 @@
 ?>
 
 <?php
+// Show all errors
+
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 $host = "cloud-database-db.mysql.database.azure.com";
 $user = "zameer";  // must include @servername
 $password = "ZAIDISGAY*123";
