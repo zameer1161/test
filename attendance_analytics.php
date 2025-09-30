@@ -8,6 +8,11 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 // Fetch user info from DB
 $stmt = $pdo->prepare("SELECT fullname, username, role FROM users WHERE id = ?");
 $stmt->execute([$_SESSION['user_id']]);
