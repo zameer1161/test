@@ -51,7 +51,7 @@ $username = "zameer";                 // Azure requires username@servername
 $password = "ZAIDISGAY*123";                // your DB password
 
 // Path to SSL certificate
-$ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.pem";     // put DigiCertGlobalRootG2.pem in your project folder
+$ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.crt";     // put DigiCertGlobalRootG2.pem in your project folder
 
 try {
     $pdo = new PDO(
