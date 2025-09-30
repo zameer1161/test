@@ -26,7 +26,7 @@ ini_set('display_errors', 1);
 $host = "cloud-database-db.mysql.database.azure.com";
 $user = "zameer";  // must include @servername
 $password = "ZAIDISGAY*123";
-$dbname = "attendance_db";
+$dbname = "attendances_db";
 $port = 3306;
 
 // Path to SSL certificate required by Azure MySQL
