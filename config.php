@@ -24,7 +24,7 @@ try {
     );
 
     // Debug message
-    echo "✅ Connected successfully to Azure MySQL with PDO + SSL<br>";
+    // echo "✅ Connected successfully to Azure MySQL with PDO + SSL<br>";
 
     // Test query to confirm connection
     $stmt = $pdo->query("SELECT NOW() AS server_time");
