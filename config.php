@@ -1,6 +1,6 @@
 <?php
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer@cloud-database-db";   // Azure requires username@servername
+$user = "zameer";   // Azure requires username@servername
 $password = "ZAIDISGAY*123";
 $dbname = "attendance_db";
 $port = 3306;
