@@ -1,23 +1,6 @@
 <?php
-
-// $host = "localhost";   // Database host
-// $db   = "attendance_db"; // Database name
-// $user = "root";        // Database username
-// $pass = "";            // Database password
-
-// try {
-//     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass);
-//     // Set common PDO options
-//     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-// } catch (PDOException $e) {
-//     die("Database Connection Failed: " . $e->getMessage());
-// }
-?>
-
-<?php
 $host = "cloud-database-db.mysql.database.azure.com";
-$user = "zameer";  // must include @servername
+$user = "zameer";   // Azure requires username@servername
 $password = "ZAIDISGAY*123";
 $dbname = "attendance_db";
 $port = 3306;
@@ -25,16 +8,38 @@ $port = 3306;
 // Path to SSL certificate required by Azure MySQL
 $ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
 
-// Start mysqli connection
-$conn = mysqli_init();
+try {
+    $dsn = "mysql:host=$host;dbname=$dbname;port=$port;charset=utf8mb4";
 
-// Tell MySQLi to use SSL
-mysqli_ssl_set($conn, NULL, NULL, $ssl_ca, NULL, NULL);
+    $pdo = new PDO(
+        $dsn,
+        $user,
+        $password,
+        [
+            PDO::MYSQL_ATTR_SSL_CA => $ssl_ca,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,        // Throw exceptions
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,   // Fetch as assoc array
+            PDO::ATTR_EMULATE_PREPARES => false                 // Use native prepared statements
+        ]
+    );
 
-// Try to connect
-if (!mysqli_real_connect($conn, $host, $user, $password, $dbname, $port, NULL, MYSQLI_CLIENT_SSL)) {
-    die("❌ Connection failed: " . mysqli_connect_error());
-} else {
-    // echo "✅ Connected successfully to Azure MySQL!";
+    // Debug message
+    echo "✅ Connected successfully to Azure MySQL with PDO + SSL<br>";
+
+    // Test query to confirm connection
+    $stmt = $pdo->query("SELECT NOW() AS server_time");
+    $row = $stmt->fetch();
+    echo "⏰ Server Time: " . $row['server_time'] . "<br>";
+
+} catch (PDOException $e) {
+    echo "❌ Database connection failed<br>";
+    echo "Error Code: " . $e->getCode() . "<br>";
+    echo "Message: " . $e->getMessage() . "<br>";
+    echo "File: " . $e->getFile() . "<br>";
+    echo "Line: " . $e->getLine() . "<br>";
+
+    // Optional: print full stack trace (comment this out in production)
+    echo "<pre>" . $e->getTraceAsString() . "</pre>";
+    exit;
 }
 ?>
