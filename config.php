@@ -6,7 +6,7 @@ $dbname = "attendance_db";
 $port = 3306;
 
 // Path to SSL certificate required by Azure MySQL
-$ssl_ca = __DIR__ . "/DigiCertGlobalRootCA.crt.pem";
+$ssl_ca = __DIR__ . "/DigiCertGlobalRootG2.crt.pem";
 
 try {
     $dsn = "mysql:host=$host;dbname=$dbname;port=$port;charset=utf8mb4";
