@@ -18,16 +18,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $_SESSION['role'] = $user['role'];
 
         // Redirect based on role
-        if ($user['role'] === 'student') {
-            header("Location: dashboard.php"); // student dashboard
-        } elseif ($user['role'] === 'teacher' || $user['role'] === 'admin') {
-            header("Location: teacher_dashboard.php"); // teacher/admin dashboard
+        switch ($user['role']) {
+            case 'student':
+                header("Location: dashboard.php");
+                exit;
+            case 'teacher':
+                header("Location: teacher_dashboard.php");
+                exit;
+            case 'admin':
+                header("Location: admin.php");
+                exit;
         }
-        exit;
     } else {
+        // Invalid login message
         $message = "❌ Invalid username or password!";
     }
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

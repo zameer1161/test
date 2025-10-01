@@ -277,18 +277,7 @@ $summary['avg_percentage'] = $summary['total_students'] > 0 ?
     </form>
 </div>
 
-<!-- Export and Actions -->
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="text-white">Student Records</h4>
-    <div>
-        <button id="exportExcel" class="btn export-btn me-2">
-            <i class="fas fa-file-excel me-1"></i>Export Excel
-        </button>
-        <button id="exportPDF" class="btn export-btn">
-            <i class="fas fa-file-pdf me-1"></i>Export PDF
-        </button>
-    </div>
-</div>
+
 
 <!-- Attendance Table -->
 <div class="table-responsive">

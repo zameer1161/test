@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['teacher','adm
 }
 
 // Get class directly from the URL
-$selectedClass = isset($_GET['grade']) ? $_GET['grade'] : '';
+$selectedClass = $_GET['grade'] ?? '';
 
 // Fetch teacher info
 $stmt = $pdo->prepare("SELECT * FROM teachers WHERE user_id=?");
@@ -38,19 +38,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $statusArray = $_POST['status'] ?? [];
     $class = $_POST['class'] ?? $selectedClass;
 
-    if (!empty($statusArray) && $subject && $class) {
+    if (!empty($statusArray) && $class) {
         try {
             $pdo->beginTransaction();
             foreach ($statusArray as $student_id => $selectedStatus) {
                 if ($selectedStatus) {
                     // Prevent duplicate attendance
-                    $check = $pdo->prepare("SELECT attendance_id FROM attendance WHERE student_id=? AND date=? AND subject=?");
-                    $check->execute([$student_id, $date, $subject]);
+                    $check = $pdo->prepare("SELECT attendance_id FROM attendance 
+                                            WHERE student_id=? AND date=? AND class=?");
+                    $check->execute([$student_id, $date, $class]);
                     if ($check->fetch()) continue;
 
-                    $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, subject, status, marked_by)
-                                             VALUES (?, ?, ?, ?, ?, ?)");
-                    $insert->execute([$student_id, $class, $date, $subject, $selectedStatus, $teacher_id]);
+                    // Insert attendance (ignore attendance_id, use my_row_id auto_increment)
+                    $insert = $pdo->prepare("INSERT INTO attendance (student_id, class, date, status, marked_by)
+                                             VALUES (?, ?, ?, ?, ?)");
+                    $insert->execute([$student_id, $class, $date, $selectedStatus, $teacher_id]);
                 }
             }
             $pdo->commit();
@@ -60,7 +62,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $message = "❌ Error: " . $e->getMessage();
         }
     } else {
-        $message = "❌ No attendance status selected or class/subject missing.";
+        $message = "❌ No attendance status selected or class missing.";
     }
 }
 ?>
@@ -149,10 +151,6 @@ img.rounded-circle { border-radius:50%; border:2px solid #4361ee; }
 <div class="form-check form-check-inline">
 <input class="form-check-input" type="radio" name="status[<?= $s['student_id'] ?>]" value="Late" id="late_<?= $s['student_id'] ?>">
 <label class="form-check-label" for="late_<?= $s['student_id'] ?>">Late</label>
-</div>
-<div class="form-check form-check-inline">
-<input class="form-check-input" type="radio" name="status[<?= $s['student_id'] ?>]" value="Sick" id="sick_<?= $s['student_id'] ?>">
-<label class="form-check-label" for="sick_<?= $s['student_id'] ?>">Sick</label>
 </div>
 </td>
 </tr>

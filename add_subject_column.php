@@ -1,5 +1,5 @@
 <?php
-require './connection/config.php';
+require 'config.php';
 
 try {
     echo "<h2>Adding Subject Column to Attendance Table...</h2>";
