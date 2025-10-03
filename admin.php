@@ -57,6 +57,12 @@ if (isset($_GET['delete_user'])) {
         if ($stmt->execute([$user_id])) {
             $message = "User deleted successfully!";
             $message_type = "success";
+        }else{
+            $stmt2 =$pdo->prepare("DELETE FROM teachers WHERE user_id = ?");
+            if($stmt2->execute([$user_id])){
+            $message = "User deleted successfully";
+            $message_type = "success";
+            } 
         }
     } catch (Exception $e) {
         $message = "Error deleting user!";
@@ -69,20 +75,35 @@ if ($_POST['action'] ?? '' === 'add_user') {
     $fullname = $_POST['fullname'];
     $username = $_POST['username'];
     $password = $_POST['password'];
-    $role = $_POST['role'];
+    $role = $_POST['role'];   // either 'teacher' or 'student'
     $email = $_POST['email'];
-    
+     $subject  = ($_POST['subject'] ?? null);
     try {
+        // 1️⃣ Insert into users
         $stmt = $pdo->prepare("INSERT INTO users (fullname, username, password, role, email) VALUES (?, ?, ?, ?, ?)");
-        if ($stmt->execute([$fullname, $username, $password, $role, $email])) {
-            $message = "User added successfully!";
-            $message_type = "success";
+        $stmt->execute([$fullname, $username, $password, $role, $email]);
+
+        // Get the user_id of the newly added user
+        $user_id = $pdo->lastInsertId();
+
+        // 2️⃣ Depending on role, insert into teacher or student
+        if ($role === 'teacher') {
+            $stmt2 = $pdo->prepare("INSERT INTO teachers (user_id ,subject) VALUES ( ?, ? )");
+            $stmt2->execute([$user_id, $subject]); // 👈 one clean insert
+        } elseif ($role === 'student') {
+            $stmt3 = $pdo->prepare("INSERT INTO students (user_id, fullname, email) VALUES (?, ?, ?)");
+            $stmt3->execute([$user_id, $fullname, $email]);
         }
+
+        $message = "User added successfully!";
+        $message_type = "success";
+
     } catch (Exception $e) {
-        $message = "Error adding user! Username might already exist.";
+        $message = "Error adding user! " . $e->getMessage();
         $message_type = "error";
     }
 }
+
 
 // Get simple statistics - NO COMPLEX QUERIES
 $stats = [
@@ -441,6 +462,13 @@ try {
                         <span>attendance_update</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="add_subject_column.php">
+                        <i class="fas fa-users-cog"></i>
+                        <span>Assign Teacher</span>
+                    </a>
+                </li>
+                
                 <li class="nav-item mt-4">
                     <a class="nav-link" href="logout.php">
                         <i class="fas fa-sign-out-alt"></i>
@@ -693,51 +721,88 @@ try {
         </div>
     </div>
 
-    <!-- Add User Modal -->
-    <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addUserModalLabel"><i class="fas fa-user-plus me-2"></i>Add New User</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form method="POST">
-                    <div class="modal-body">
-                        <input type="hidden" name="action" value="add_user">
-                        <div class="mb-3">
-                            <label for="fullname" class="form-label">Full Name</label>
-                            <input type="text" class="form-control" id="fullname" name="fullname" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Role</label>
-                            <select class="form-select" id="role" name="role" required>
-                                <option value="">Select Role</option>
-                                <option value="student">Student</option>
-                                <option value="teacher">Teacher</option>
-                                <option value="admin">Administrator</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Add User</button>
-                    </div>
-                </form>
-            </div>
+   <!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalLabel"><i class="fas fa-user-plus me-2"></i>Add New User</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST">
+        <div class="modal-body">
+          <input type="hidden" name="action" value="add_user">
+
+          <div class="mb-3">
+            <label for="fullname" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select class="form-select" id="role" name="role" required>
+              <option value="">Select Role</option>
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+              <option value="admin">Administrator</option>
+            </select>
+          </div>
+
+          <!-- Subject dropdown (hidden by default) -->
+          <div class="mb-3" id="subjectField" style="display: none;">
+            <label for="subject" class="form-label">Subject</label>
+            <select class="form-select" name="subject" id="subject">
+              <option value="">Select Subject</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Science">Science</option>
+              <option value="English">English</option>
+              <option value="History">History</option>
+              <option value="Geography">Geography</option>
+              <option value="Computer">Computer</option>
+            </select>
+          </div>
         </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add User</button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
+<!-- JavaScript to toggle subject field -->
+<script>
+document.getElementById("role").addEventListener("change", function() {
+  let role = this.value;
+  let subjectField = document.getElementById("subjectField");
+  
+  if (role === "teacher") {
+    subjectField.style.display = "block";
+    document.getElementById("subject").setAttribute("required", "true");
+  } else {
+    subjectField.style.display = "none";
+    document.getElementById("subject").removeAttribute("required");
+  }
+});
+</script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>

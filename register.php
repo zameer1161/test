@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $pdo->beginTransaction();
 
             // Check username exists
-            $checkUser = $pdo->prepare("SELECT id FROM users WHERE username = ? LIMIT 1");
+            $checkUser = $pdo->prepare("SELECT username FROM users WHERE username = ? LIMIT 1");
             $checkUser->execute([$username]);
             if ($checkUser->fetch()) {
                 $pdo->rollBack();
@@ -474,20 +474,3 @@ body {
         </div>
     </div>
 </div>
-
-<script>
-// File upload label update
-document.getElementById('profilePhoto').addEventListener('change', function(e) {
-    const fileName = e.target.files[0] ? e.target.files[0].name : 'Choose profile photo';
-    document.getElementById('fileLabel').textContent = fileName;
-});
-
-// Form validation
-document.querySelector('form').addEventListener('submit', function(e) {
-    const requiredFields = this.querySelectorAll('input[required]');
-    let valid = true;
-    
-    requiredFields.forEach(field => {
-        if (!field.value.trim()) {
-            valid = false;
-            field
